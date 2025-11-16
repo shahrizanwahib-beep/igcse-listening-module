@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGCSE 0546 Modul Mendengar Dwibahasa</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons as a standard script. This populates the global 'lucide' object. -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Fix 2: Removed problematic 'type="module"' and 'import' statement.
+        // Ensure createIcons is globally accessible under window.createIcons for the app's rendering loop
+        window.createIcons = window.lucide ? window.lucide.createIcons : () => console.error("Lucide failed to load.");
+        window.addEventListener('DOMContentLoaded', () => {
+             // Initial run of createIcons for static elements (if any)
+             if (window.createIcons) {
+                window.createIcons();
+            }
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        /* Custom radio button colors for light mode */
+        .form-radio:checked { background-color: #06B6D4; border-color: #06B6D4; } /* Cyan 500 */
+        .shadow-custom { box-shadow: 0 15px 30px rgba(79, 70, 229, 0.2); }
+    </style>
+</head>
+<!-- Latar belakang aplikasi kini ditetapkan kepada warna putih-cerah -->
+<body class="bg-gray-50 transition-colors duration-500">
+
+    <div id="app-root" class="min-h-screen p-4 sm:p-8 font-sans transition-colors duration-500">
+        <!-- Kandungan aplikasi akan dimuatkan di sini oleh JavaScript -->
+        <div class="text-center p-8 text-gray-500">Memuatkan modul...</div>
+    </div>
+
+    <script>
+        // --- TRANSLATION DATA ---
+        const translations = {
+            bm: {
+                // General
+                TITLE_MAIN: "IGCSE 0546 Modul Mendengar Interaktif",
+                TOPIC: "Topik: BERTEMU ORANG DARIPADA PELBAGAI LATAR BELAKANG",
+                START_MODULE: "Mula Modul (Tekan →)",
+                BACK: "Kembali (←)",
+                NEXT: "Teruskan →",
+                NAV_TITLE: "Peta Modul",
+                CURRENT_SLIDE: "Slaid Semasa:",
+                QUICK_NAV: "Gunakan ArrowRight (→) dan ArrowLeft (←) untuk navigasi pantas.",
+                SCORE_ACCUMULATED: "Markah Latihan Dikumpul",
+                SUBMIT_ANSWERS: "Semak Jawapan (Dapatkan Markah)",
+                PLAY_AUDIO_FIRST: "Sila Mainkan Audio Dahulu",
+                PLEASE_SUBMIT_FIRST: "Sila lengkapkan dan serahkan latihan ini sebelum melangkau ke slaid seterusnya.", // Note: This text is now only shown if user clicks the submit button without playing audio.
+                SCORE: "Markah:",
+                TOTAL_SCORE: "Markah Keseluruhan:",
+                CORRECT_TEXT: "Betul",
+                FALSE_TEXT: "Salah",
+                ANSWER: "Jawapan Sebenar:",
+                RIGHT_ANSWER: "Jawapan Tepat!",
+                CONGRATS_ACHIEVEMENT: "Pencapaian Anda",
+                NOTIFICATION_TITLE: "Notifikasi",
+
+                // Slide 1
+                MODULE_DESC_TITLE: "Penerangan Modul",
+                MODULE_DESC: "Modul canggih ini mengukuhkan kemahiran mendengar anda, fokus pada pemahaman konteks sosial dan budaya mengikut format IGCSE 0546.",
+                OBJECTIVES_TITLE: "Objektif Pembelajaran",
+                OBJ1: "Memahami perbualan mengenai perkenalan dan adat resam.",
+                OBJ2: "Mengenal pasti pendapat dan sikap penceramah terhadap perbezaan budaya.",
+                OBJ3: "Mengesan maklumat spesifik, idea utama, dan pelbagai perspektif.",
+                OBJ4: "Menggunakan navigasi papan kekunci (← / →) untuk interaksi pantas.",
+
+                // Slide 2
+                VOCAB_TITLE: "Pengenalan Kosa Kata Kunci",
+                VOCAB_DESC: "Fahami istilah ini sebagai persediaan untuk latihan mendengar.",
+                TO_EXERCISE: "Teruskan ke Latihan (→)",
+
+                // Audio Template
+                SCENARIO: "Senario:",
+                SKILL_TESTED: "Kemahiran Diuji:",
+                SKILL_SPECIFIC_INFO: "Maklumat Spesifik",
+                SKILL_ATTITUDE: "Sikap & Perasaan",
+                SKILL_OPINION: "Memahami Pendapat",
+                SKILL_PERSPECTIVE: "Pelbagai Perspektif", // Digunakan oleh Latihan 4 baharu
+                AUDIO_CONTROL: "Kawalan Audio Latihan: Dengarkan dengan teliti.",
+                INPUT_PLACEHOLDER: "Isi jawapan di sini...",
+                MATCHING_DEFAULT: "Pilih Penceramah",
+                PLAY_AUDIO_ALERT: "Sila mainkan audio sekurang-kurangnya sekali sebelum menyerahkan jawapan.",
+
+                // Feedback
+                FEEDBACK_TITLE: "Maklum Balas Motivasi Gemini",
+                FEEDBACK_LOADING: "Menjana maklum balas TTS...",
+                FEEDBACK_DEFAULT: "Maklum balas akan dipaparkan di sini.",
+
+                // Slide 7 (Reflection)
+                REFLECTION_TITLE: "Refleksi Kendiri (5 minit)",
+                REFLECTION_TASK_TITLE: "Tugasan Refleksi:",
+                REFLECTION_TASK: "Berdasarkan latihan yang anda jalani, apakah cabaran terbesar yang mungkin anda hadapi apabila bertemu dan bekerjasama dengan rakan-rakan dari latar belakang budaya yang sangat berbeza? Bagaimanakah anda akan mengatasi cabaran tersebut?",
+                REFLECTION_PLACEHOLDER: "Tulis jawapan refleksi anda di sini (Minimum 10 aksara)...",
+                REPORT_SCORE: "Lapor Skor Akhir (→)",
+                REFLECTION_REQUIRED: "Tiada jawapan refleksi direkodkan.",
+
+                // Slide 8 (Summary)
+                SUMMARY_TITLE: "Laporan Skor Akhir",
+                SUMMARY_SUMMARY: "Syabas! Anda telah mengukuhkan kemahiran mendengar penting untuk kertas IGCSE. Tinjau markah anda di bawah.",
+                OVERALL_SCORE: "Markah keseluruhan anda adalah",
+                OUT_OF: "daripada",
+                CONGRATS: "markah. Tahniah!",
+                REFLECTION_YOURS: "Refleksi Anda:",
+                RESTART_MODULE: "Mulakan Modul Semula",
+
+                // Nav Links
+                NAV_1: "Tajuk & Objektif", NAV_2: "Kosa Kata Kunci", NAV_3: "Latihan 1", NAV_4: "Latihan 2", NAV_5: "Latihan 3", NAV_6: "Latihan 4", NAV_7: "Refleksi", NAV_8: "Skor Akhir",
+
+                // Vocabulary List
+                V_1_BM: "Latar belakang", V_1_BI: "Background", V_1_FUN: "Asal usul, pendidikan, atau pengalaman.",
+                V_2_BM: "Adat resam", V_2_BI: "Customs", V_2_FUN: "Amalan tradisional yang diikuti oleh sesebuah komuniti.",
+                V_3_BM: "Perspektif", V_3_BI: "Perspective", V_3_FUN: "Cara pandangan atau sudut pandang seseorang.",
+                V_4_BM: "Menghormati", V_4_BI: "To respect", V_4_FUN: "Menunjukkan penghargaan terhadap perasaan atau perbezaan.",
+                V_5_BM: "Kejutan budaya", V_5_BI: "Culture shock", V_5_FUN: "Perasaan terkejut apabila berada dalam persekitaran budaya baharu.",
+                V_6_BM: "Salah faham", V_6_BI: "Misunderstanding", V_6_FUN: "Kesilapan tafsiran atau kegagalan untuk memahami dengan betul.",
+                V_7_BM: "Stereotaip", V_7_BI: "Stereotype", V_7_FUN: "Pandangan umum yang disederhanakan terhadap ahli kumpulan tertentu.",
+            },
+            en: {
+                // General
+                TITLE_MAIN: "IGCSE 0546 Interactive Listening Module",
+                TOPIC: "Topic: MEETING PEOPLE FROM DIVERSE BACKGROUNDS",
+                START_MODULE: "Start Module (Press →)",
+                BACK: "Back (←)",
+                NEXT: "Continue →",
+                NAV_TITLE: "Module Map",
+                CURRENT_SLIDE: "Current Slide:",
+                QUICK_NAV: "Use ArrowRight (→) and ArrowLeft (←) for quick navigation.",
+                SCORE_ACCUMULATED: "Accumulated Exercise Score",
+                SUBMIT_ANSWERS: "Check Answers (Get Score)",
+                PLAY_AUDIO_FIRST: "Please Play Audio First",
+                PLEASE_SUBMIT_FIRST: "Please complete and submit this exercise before skipping to the next slide.",
+                SCORE: "Score:",
+                TOTAL_SCORE: "Overall Score:",
+                CORRECT_TEXT: "True",
+                FALSE_TEXT: "False",
+                ANSWER: "Correct Answer:",
+                RIGHT_ANSWER: "Exact Answer!",
+                CONGRATS_ACHIEVEMENT: "Your Achievement",
+                NOTIFICATION_TITLE: "Notification",
+
+                // Slide 1
+                MODULE_DESC_TITLE: "Module Description",
+                MODULE_DESC: "This advanced module reinforces your listening skills, focusing on understanding social and cultural context according to the IGCSE 0546 format.",
+                OBJECTIVES_TITLE: "Learning Objectives",
+                OBJ1: "Understand conversations regarding introductions and customs.",
+                OBJ2: "Identify the speaker's opinions and attitudes towards cultural differences.",
+                OBJ3: "Detect specific information, main ideas, and various perspectives.",
+                OBJ4: "Use keyboard navigation (← / →) for fast interaction.",
+
+                // Slide 2
+                VOCAB_TITLE: "Key Vocabulary Introduction",
+                VOCAB_DESC: "Understand these terms in preparation for the listening exercises.",
+                TO_EXERCISE: "Proceed to Exercises (→)",
+
+                // Audio Template
+                SCENARIO: "Scenario:",
+                SKILL_TESTED: "Skill Tested:",
+                SKILL_SPECIFIC_INFO: "Specific Information",
+                SKILL_ATTITUDE: "Attitude & Feeling",
+                SKILL_OPINION: "Understanding Opinions",
+                SKILL_PERSPECTIVE: "Multiple Perspectives", // Digunakan oleh Latihan 4 baharu
+                AUDIO_CONTROL: "Exercise Audio Control: Listen carefully.",
+                INPUT_PLACEHOLDER: "Enter your answer here...",
+                MATCHING_DEFAULT: "Select Speaker",
+                PLAY_AUDIO_ALERT: "Please play the audio at least once before submitting the answers.",
+
+                // Feedback
+                FEEDBACK_TITLE: "Gemini Motivational Feedback",
+                FEEDBACK_LOADING: "Generating TTS feedback...",
+                FEEDBACK_DEFAULT: "Feedback will be displayed here.",
+
+                // Slide 7 (Reflection)
+                REFLECTION_TITLE: "Self-Reflection (5 minutes)",
+                REFLECTION_TASK_TITLE: "Reflection Task:",
+                REFLECTION_TASK: "Based on the exercises you completed, what is the biggest challenge you might face when meeting and collaborating with friends from vastly different cultural backgrounds? How would you overcome this challenge?",
+                REFLECTION_PLACEHOLDER: "Write your reflection answer here (Minimum 10 characters)...",
+                REPORT_SCORE: "Report Final Score (→)",
+                REFLECTION_REQUIRED: "No reflection answer recorded.",
+
+                // Slide 8 (Summary)
+                SUMMARY_TITLE: "Final Score Report",
+                SUMMARY_SUMMARY: "Well done! You have strengthened important listening skills for the IGCSE paper. Review your scores below.",
+                OVERALL_SCORE: "Your overall score is",
+                OUT_OF: "out of",
+                CONGRATS: "marks. Congratulations!",
+                REFLECTION_YOURS: "Your Reflection:",
+                RESTART_MODULE: "Restart Module",
+
+                // Nav Links
+                NAV_1: "Title & Objectives", NAV_2: "Key Vocabulary", NAV_3: "Exercise 1", NAV_4: "Exercise 2", NAV_5: "Exercise 3", NAV_6: "Exercise 4", NAV_7: "Reflection", NAV_8: "Final Score",
+
+                // Vocabulary List
+                V_1_BM: "Latar belakang", V_1_BI: "Background", V_1_FUN: "Origin, education, or experience.",
+                V_2_BM: "Adat resam", V_2_BI: "Customs", V_2_FUN: "Traditional practices followed by a community.",
+                V_3_BM: "Perspektif", V_3_BI: "Perspective", V_3_FUN: "A way of looking at something or a point of view.",
+                V_4_BM: "Menghormati", V_4_BI: "To respect", V_4_FUN: "Showing appreciation for feelings or differences.",
+                V_5_BM: "Kejutan budaya", V_5_BI: "Culture shock", V_5_FUN: "The feeling of disorientation experienced when suddenly subjected to an unfamiliar culture.",
+                V_6_BM: "Salah faham", V_6_BI: "Misunderstanding", V_6_FUN: "A mistake of interpretation or a failure to comprehend correctly.",
+                // BARIS-BARIS YANG MENYEBABKAN RALAT TELAH DIBUANG DARI SINI
+                V_7_BM: "Stereotaip", V_7_BI: "Stereotype", V_7_FUN: "A generalized and often fixed perception of members of a certain group.",
+            },
+        };
+
+        // --- MOCK QUESTIONS (BILINGUAL) ---
+        const mockQuestionsBilingual = {
+            3: {
+                title_bm: "Latihan Audio 1: Maklumat Spesifik (10 Markah)", title_en: "Audio Exercise 1: Specific Information (10 Marks)",
+                scenario_bm: "Perkenalan terperinci antara pelajar pertukaran dari Malaysia dan Jepun di sebuah majlis sukan universiti, termasuk perbincangan tentang jadual kelas, makanan tempatan, dan hobi yang tidak dijangka.", 
+                scenario_en: "A detailed introduction between a Malaysian and a Japanese exchange student at a university sports event, including discussions about class schedules, local cuisine, and unexpected hobbies.",
+                type: "MCQ",
+                q: [
+                    { text_bm: "1. Apakah hobi utama pelajar Jepun itu?", text_en: "1. What is the Japanese student's main hobby?", options_bm: ["Memasak", "Bola Sepak", "Muzik", "Mengembara"], options_en: ["Cooking", "Football", "Music", "Traveling"], answer: 1 },
+                    { text_bm: "2. Di bandar manakah dia akan melanjutkan pelajaran?", text_en: "2. In which city will he continue his studies?", options_bm: ["Kuala Lumpur", "Johor Bahru", "Kyoto", "Tokyo"], options_en: ["Kuala Lumpur", "Johor Bahru", "Kyoto", "Tokyo"], answer: 0 },
+                    { text_bm: "3. Berapa lama dia dijangka tinggal di Malaysia?", text_en: "3. How long is he expected to stay in Malaysia?", options_bm: ["6 bulan", "1 tahun", "2 tahun", "3 tahun"], options_en: ["6 months", "1 year", "2 years", "3 years"], answer: 1 },
+                    { text_bm: "4. Apakah yang dilakukan oleh pelajar Malaysia untuk menyambut kedatangannya?", text_en: "4. What did the Malaysian student do to welcome him?", options_bm: ["Membawa ke restoran", "Memperkenalkan rakan-rakan", "Menunjuk-ajar laluan", "Membeli hadiah"], options_en: ["Took him to a restaurant", "Introduced friends", "Showed him the way", "Bought a gift"], answer: 1 },
+                    { text_bm: "5. Apakah makanan yang menarik perhatian pelajar Jepun itu?", text_en: "5. Which food caught the Japanese student's attention?", options_bm: ["Nasi Lemak", "Roti Canai", "Laksa", "Satay"], options_en: ["Nasi Lemak", "Roti Canai", "Laksa", "Satay"], answer: 0 },
+                    { text_bm: "6. Apakah subjek kegemaran pelajar Jepun itu?", text_en: "6. What is the Japanese student's favorite subject?", options_bm: ["Matematik", "Sains", "Sejarah", "Bahasa"], options_en: ["Math", "Science", "History", "Language"], answer: 0 },
+                    { text_bm: "7. Pelajar Malaysia memberikannya nasihat tentang ____.", text_en: "7. The Malaysian student advised him about ____.", options_bm: ["Trafik", "Makanan", "Cuaca", "Harga"], options_en: ["Traffic", "Food", "Weather", "Prices"], answer: 0 },
+                    { text_bm: "8. Pada bahagian mana majlis sukan itu mereka bertemu?", text_en: "8. In which part of the sports event did they meet?", options_bm: ["Di padang", "Di kafeteria", "Di pintu masuk", "Di gim"], options_en: ["On the field", "In the cafeteria", "At the entrance", "In the gym"], answer: 1 },
+                    { text_bm: "9. Pelajar Jepun menyatakan dia merindui ____.", text_en: "9. The Japanese student said he misses ____.", options_bm: ["Keluarga", "Sushi", "Bunga Sakura", "Manga"], options_en: ["Family", "Sushi", "Cherry Blossoms", "Manga"], answer: 1 },
+                    { text_bm: "10. Mereka bercadang untuk bertemu semula untuk ____.", text_en: "10. They planned to meet again for ____.", options_bm: ["Belajar", "Makan malam", "Berjalan-jalan", "Beli-belah"], options_en: ["Studying", "Dinner", "A walk", "Shopping"], answer: 1 },
+                ],
+                // PEMBETULAN IKON (usercheck -> user-check)
+                icon: "user-check" 
+            },
+            4: {
+                title_bm: "Latihan Audio 2: Idea Utama & Sikap (10 Markah)", title_en: "Audio Exercise 2: Main Idea & Attitude (10 Marks)",
+                scenario_bm: "Monolog seorang pelajar pertukaran yang berkongsi pengalaman pahit manis menempuh 'kejutan budaya' dan cara dia menyesuaikan diri dengan norma sosial baharu serta sistem akademik yang berbeza.", 
+                scenario_en: "A monologue by an exchange student sharing the bittersweet experience of navigating 'culture shock' and how she adapts to new social norms and a different academic system.",
+                type: "BS", // Betul/Salah (True/False)
+                q: [
+                    { text_bm: "1. Penceramah berasa kecewa dengan makanan tempatan.", text_en: "1. The speaker felt disappointed with the local food.", answer_bm: "Salah", answer_en: "False" },
+                    { text_bm: "2. Penceramah menunjukkan sikap positif terhadap cabaran yang dihadapi.", text_en: "2. The speaker showed a positive attitude towards the challenges faced.", answer_bm: "Betul", answer_en: "True" },
+                    { text_bm: "3. Isu terbesar yang dihadapi ialah masalah bahasa.", text_en: "3. The biggest issue faced was the language barrier.", answer_bm: "Salah", answer_en: "False" },
+                    { text_bm: "4. Dia menghargai sokongan daripada keluarga angkatnya.", text_en: "4. She appreciates the support from her host family.", answer_bm: "Betul", answer_en: "True" },
+                    { text_bm: "5. Pada mulanya, dia ingin pulang ke negaranya.", text_en: "5. Initially, she wanted to return to her home country.", answer_bm: "Salah", answer_en: "False" },
+                    { text_bm: "6. Penceramah mengkritik sistem pengangkutan tempatan.", text_en: "6. The speaker criticized the local transportation system.", answer_bm: "Salah", answer_en: "False" },
+                    { text_bm: "7. Dia menyatakan bahawa adat menyapa di sana sangat formal.", text_en: "7. She mentioned that the greeting customs there are very formal.", answer_bm: "Salah", answer_en: "False" },
+                    { text_bm: "8. Dia bersetuju bahawa kejutan budaya adalah pengalaman yang menyeronokkan.", text_en: "8. She agreed that culture shock is an enjoyable experience.", answer_bm: "Betul", answer_en: "True" },
+                    { text_bm: "9. Penceramah berasa lebih yakin untuk berkomunikasi pada akhir monolog.", text_en: "9. The speaker felt more confident communicating at the end of the monologue.", answer_bm: "Betul", answer_en: "True" },
+                    { text_bm: "10. Dia menyebut dia berasal dari benua Eropah.", text_en: "10. She mentioned she is from the European continent.", answer_bm: "Salah", answer_en: "False" },
+                ],
+                icon: "Book"
+            },
+            5: {
+                title_bm: "Latihan Audio 3: Memahami Pendapat (10 Markah)", title_en: "Audio Exercise 3: Understanding Opinions (10 Marks)",
+                scenario_bm: "Dialog yang lebih mendalam antara dua rakan tentang cara terbaik untuk mengekalkan persahabatan merentas budaya, membincangkan isu sensitiviti, festival, dan peranan media sosial.", 
+                scenario_en: "A deeper dialogue between two friends about the best ways to maintain cross-cultural friendships, discussing issues of sensitivity, festivals, and the role of social media.",
+                type: "FITB", // Fill In The Blank
+                q: [
+                    { text_bm: "1. Menurut Rakan A, salah faham sering timbul kerana perbezaan __________. ", text_en: "1. According to Friend A, misunderstandings often arise due to differences in __________. ", answer_bm: "Nilai", answer_en: "Values" },
+                    { text_bm: "2. Kedua-dua rakan bersetuju bahawa persahabatan merentas budaya memupuk __________ yang lebih luas.", text_en: "2. Both friends agree that cross-cultural friendship fosters broader __________. ", answer_bm: "Kefahaman", answer_en: "Understanding" },
+                    { text_bm: "3. Rakan B menyatakan bahawa dia belajar tentang __________ dari rakan baharunya.", text_en: "3. Friend B stated that she learned about __________ from her new friend. ", answer_bm: "Keterbukaan", answer_en: "Open-mindedness" },
+                    { text_bm: "4. Mereka berbincang tentang kepentingan __________ apabila berhadapan dengan perbezaan. ", text_en: "4. They discussed the importance of __________ when dealing with differences. ", answer_bm: "Toleransi", answer_en: "Tolerance" },
+                    { text_bm: "5. Persahabatan ini membawa kepada __________ yang lebih kaya. ", text_en: "5. This friendship leads to richer __________.", answer_bm: "Pengalaman", answer_en: "Experiences" },
+                    { text_bm: "6. Rakan A percaya bahawa komunikasi yang berkesan memerlukan __________. ", text_en: "6. Friend A believes that effective communication requires __________. ", answer_bm: "Kesabaran", answer_en: "Patience" },
+                    { text_bm: "7. Rakan B mendapati bahawa perbezaan cara __________ adalah cabaran utama. ", text_en: "7. Friend B found that differences in __________ style are the main challenge. ", answer_bm: "Berjenaka", answer_en: "Humor" },
+                    { text_bm: "8. Mereka bersetuju bahawa persahabatan ini meluaskan __________ seseorang.", text_en: "8. They agreed that this friendship broadens one's __________.", answer_bm: "Perspektif", answer_en: "Perspective" },
+                    { text_bm: "9. Rakan A menekankan bahawa mereka perlu fokus pada __________ bersama.", text_en: "9. Friend A stressed that they need to focus on common __________.", answer_bm: "Matlamat", answer_en: "Goals" },
+                    { text_bm: "10. Rakan B bercadang untuk mengatasi masalah dengan sikap yang lebih __________.", text_en: "10. Friend B proposed to overcome problems with a more __________.", answer_bm: "Terbuka", answer_en: "Open" },
+                ],
+                icon: "book-open" // DIBETULKAN: "BookOpen" -> "book-open"
+            },
+            // --- KEMAS KINI LATIHAN 4 ---
+            6: {
+                title_bm: "Latihan Audio 4: Menangani Stereotaip (10 Markah)", title_en: "Audio Exercise 4: Handling Stereotypes (10 Marks)",
+                scenario_bm: "Perbualan antara dua rakan sekerja, Sarah dan Ben, membincangkan pengalaman peribadi mereka dengan stereotaip di tempat kerja dan berkongsi strategi untuk menanganinya secara positif.",
+                scenario_en: "A conversation between two colleagues, Sarah and Ben, discussing their personal experiences with stereotypes in the workplace and sharing strategies to handle them positively.",
+                type: "FITB", // Tukar kepada Isi Tempat Kosong (Fill in the Blank)
+                q: [
+                    { text_bm: "1. Pada mulanya, Sarah berasa __________ apabila orang membuat andaian tentangnya.", text_en: "1. Initially, Sarah felt __________ when people made assumptions about her.", answer_bm: "Kecewa", answer_en: "Disappointed" },
+                    { text_bm: "2. Ben percaya stereotaip kebanyakannya berpunca daripada __________ maklumat.", text_en: "2. Ben believes stereotypes mostly stem from a __________ of information.", answer_bm: "Kekurangan", answer_en: "Lack" },
+                    { text_bm: "3. Sarah mengubah persepsi rakan sekerjanya dengan menunjukkan __________ kerjanya.", text_en: "3. Sarah changed her colleagues' perception by showing the __________ of her work.", answer_bm: "Kualiti", answer_en: "Quality" },
+                    { text_bm: "4. Ben menggunakan __________ untuk membetulkan tanggapan salah orang terhadapnya.", text_en: "4. Ben uses __________ to correct wrong assumptions about him.", answer_bm: "Jenaka", answer_en: "Humor" },
+                    { text_bm: "5. Sarah menasihatkan agar tidak cepat bersikap __________.", text_en: "5. Sarah advises not to quickly become __________.", answer_bm: "Defensif", answer_en: "Defensive" },
+                    { text_bm: "6. Mereka bersetuju bahawa stereotaip adalah __________ yang tidak adil.", text_en: "6. They agree that stereotypes are an unfair __________.", answer_bm: "Generalisasi", answer_en: "Generalization" },
+                    { text_bm: "7. Ben melihat situasi ini sebagai peluang untuk __________ orang lain.", text_en: "7. Ben sees this situation as an opportunity to __________ others.", answer_bm: "Mendidik", answer_en: "Educate" },
+                    { text_bm: "8. Sarah menyatakan bahawa proses itu memerlukan __________.", text_en: "8. Sarah mentions that the process requires __________.", answer_bm: "Kesabaran", answer_en: "Patience" },
+                    { text_bm: "9. Kedua-duanya bersetuju __________ adalah penting untuk persefahaman.", text_en: "9. Both agree __________ is important for understanding.", answer_bm: "Empati", answer_en: "Empathy" },
+                    { text_bm: "10. Mereka menekankan kepentingan __________ terbuka untuk menyelesaikan isu.", text_en: "10. They stress the importance of open __________ to resolve issues.", answer_bm: "Komunikasi", answer_en: "Communication" },
+                ],
+                icon: "Users" // Ikon masih relevan
+            },
+            // --- TAMAT KEMAS KINI LATIHAN 4 ---
+        };
+
+        // --- STATE MANAGEMENT ---
+        let state = {
+            currentSlide: 1,
+            // Updated to accommodate 10 questions per slide
+            score: { 3: 0, 4: 0, 5: 0, 6: 0 },
+            answers: { 
+                3: Array(10).fill(null), // 10 questions
+                4: Array(10).fill(''), // 10 questions (FITB)
+                5: Array(10).fill(''),  // 10 questions
+                6: Array(10).fill(''), // 10 questions (FITB)
+                7: "" 
+            },
+            isSubmitted: { 3: false, 4: false, 5: false, 6: false },
+            isAudioPlayed: { 3: false, 4: false, 5: false, 6: false },
+            feedback: { text: null, audioUrl: null, isLoading: false },
+            language: 'bm'
+        };
+
+        // --- UTILITY FUNCTIONS ---
+        function t(key) { return translations[state.language][key] || key; }
+        const langCode = () => state.language === 'bm' ? '_bm' : '_en';
+
+        // Custom alert function (to replace window.alert)
+        const showMessage = (message) => {
+            const container = document.getElementById('app-root');
+            let messageBox = document.getElementById('custom-message-box');
+            
+            if (!messageBox) {
+                messageBox = document.createElement('div');
+                messageBox.id = 'custom-message-box';
+                messageBox.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300';
+                messageBox.innerHTML = `
+                    <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full transform scale-100 transition-transform duration-300 border-t-4 border-indigo-500">
+                        <h4 class="text-xl font-bold text-indigo-700 mb-3">${t('NOTIFICATION_TITLE') || (state.language === 'bm' ? 'Notifikasi' : 'Notification')}</h4>
+                        <p id="message-content" class="text-gray-700 mb-4"></p>
+                        <button onclick="document.getElementById('custom-message-box').remove()" class="w-full bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700 transition-colors">
+                            OK
+                        </button>
+                    </div>
+                `;
+                container.appendChild(messageBox);
+            }
+            document.getElementById('message-content').innerText = message;
+            messageBox.style.display = 'flex';
+        };
+
+        // --- CORE LOGIC HANDLERS (Used in onclicks) ---
+        const toggleLanguage = () => {
+            state.language = state.language === 'bm' ? 'en' : 'bm';
+            renderApp();
+        };
+        window.toggleLanguage = toggleLanguage; // expose to global scope
+
+        // Fullscreen Toggle Logic
+        const toggleFullScreen = () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.documentElement.requestFullscreen().catch(err => {
+                    showMessage(state.language === 'bm' ? 
+                        `Gagal memasuki mod skrin penuh: ${err.message}` : 
+                        `Error attempting to enable full-screen mode: ${err.message}`
+                    );
+                });
+            }
+            renderApp(); // Rerender to update the button icon/text
+        };
+        window.toggleFullScreen = toggleFullScreen; // expose to global scope
+
+        // UPDATED: Removed submission check as requested by user
+        const handleNext = () => {
+            state.currentSlide = Math.min(state.currentSlide + 1, 8);
+            state.feedback = { text: null, audioUrl: null, isLoading: false };
+            renderApp();
+        };
+        window.handleNext = handleNext;
+
+        const handlePrev = () => {
+            state.currentSlide = Math.max(state.currentSlide - 1, 1);
+            state.feedback = { text: null, audioUrl: null, isLoading: false };
+            renderApp();
+        };
+        window.handlePrev = handlePrev;
+
+        // UPDATED: Removed submission check as requested by user
+        const handleNavigate = (slideNum) => {
+            slideNum = parseInt(slideNum);
+            state.currentSlide = slideNum;
+            state.feedback = { text: null, audioUrl: null, isLoading: false };
+            renderApp();
+        };
+        window.handleNavigate = handleNavigate;
+
+        const handleAudioPlay = (slideNum) => {
+            state.isAudioPlayed = { ...state.isAudioPlayed, [slideNum]: true };
+            renderApp(); // Re-render to enable submit button
+        };
+        window.handleAudioPlay = handleAudioPlay;
+
+        const handleAnswerChange = (slideNum, qIndex, value) => {
+            if (state.isSubmitted[slideNum]) return;
+            const newAnswers = [...state.answers[slideNum]];
+            newAnswers[qIndex] = value;
+            state.answers = { ...state.answers, [slideNum]: newAnswers };
+            renderApp();
+        };
+        window.handleAnswerChange = handleAnswerChange;
+
+        const handleReflectionChange = (e) => {
+            state.answers = { ...state.answers, 7: e.target.value };
+            renderApp();
+        };
+        window.handleReflectionChange = handleReflectionChange;
+
+
+        const generateMotivationalFeedback = (currentScore, slideNum) => {
+            state.feedback = { text: null, audioUrl: null, isLoading: true };
+            renderApp();
+
+            const maxScore = 10; // UPDATED: Max score is now 10
+            let message = "";
+            
+            if (currentScore === maxScore) {
+                message = state.language === 'bm' ? "Syabas! Anda mendapat markah penuh! Pendengaran anda sangat tajam dan fokus. Teruskan kecemerlangan ini!" : "Excellent! You got a perfect score! Your listening is very sharp and focused. Keep up the excellence!";
+            } else if (currentScore >= maxScore - 3) { // Adjusted range for 10 marks (7-9/10 is good)
+                message = state.language === 'bm' ? `Bagus! Anda mendapat ${currentScore} daripada 10. Sedikit lagi untuk mencapai tahap cemerlang. Ulangi bahagian yang sukar.` : `Good job! You scored ${currentScore} out of 10. You are very close to achieving excellence. Repeat the difficult sections.`;
+            } else {
+                message = state.language === 'bm' ? `Anda mendapat ${currentScore} daripada 10. Jangan putus asa! Gunakan semula skrip ini sebagai latihan pendengaran berulang.` : `You scored ${currentScore} out of 10. Don't give up! Reuse this script as a repeated listening exercise.`;
+            }
+
+            // --- KEMAS KINI AUDIO MAKLUM BALAS DINAMIK (TIADA FOLDER 'audio/') ---
+            // DIBETULKAN: Menggunakan huruf kecil 'l'
+            let feedbackAudioFile = "latihan_1.wav"; // Lalai
+            if (slideNum === 4) feedbackAudioFile = "latihan_2.wav";
+            else if (slideNum === 5) feedbackAudioFile = "latihan_3.wav";
+            else if (slideNum === 6) feedbackAudioFile = "latihan_4.wav";
+            // --- TAMAT KEMAS KINI ---
+
+            // Simulate TTS API call delay
+            setTimeout(() => {
+                state.feedback = {
+                    text: message,
+                    audioUrl: feedbackAudioFile, // Menggunakan fail audio yang betul
+                    isLoading: false
+                };
+                renderApp();
+            }, 1500);
+        };
+
+        const handleSubmit = (slideNum) => {
+            slideNum = parseInt(slideNum);
+            if (!state.isAudioPlayed[slideNum]) {
+                showMessage(t('PLAY_AUDIO_ALERT'));
+                return;
+            }
+
+            let currentScore = 0;
+            const data = mockQuestionsBilingual[slideNum];
+            const currentAnswers = state.answers[slideNum];
+
+            data.q.forEach((q, qIndex) => {
+                let isCorrect = false;
+                const userAnswer = currentAnswers[qIndex];
+
+                // Skip evaluation if no answer was provided (null or empty string)
+                if (userAnswer === null || userAnswer === '') return; 
+
+                if (data.type === "MCQ" || data.type === "Matching") {
+                    // Pastikan userAnswer adalah integer jika ia datang dari radio/select
+                    const userValue = (typeof userAnswer === 'string') ? parseInt(userAnswer, 10) : userAnswer;
+                    isCorrect = userValue === q.answer;
+                } else if (data.type === "BS") {
+                    const correctAnswer = state.language === 'bm' ? q.answer_bm : q.answer_en;
+                    isCorrect = userAnswer === correctAnswer;
+                } else if (data.type === "FITB") {
+                    const correctAnswer = (state.language === 'bm' ? q.answer_bm : q.answer_en).toLowerCase().trim();
+                    const userValue = String(userAnswer).toLowerCase().trim();
+                    isCorrect = userValue === correctAnswer;
+                }
+
+                if (isCorrect) {
+                    currentScore += 1;
+                }
+            });
+
+            state.score = { ...state.score, [slideNum]: currentScore };
+            state.isSubmitted = { ...state.isSubmitted, [slideNum]: true };
+            generateMotivationalFeedback(currentScore, slideNum);
+            renderApp();
+        };
+        window.handleSubmit = handleSubmit;
+
+        // --- RENDER FUNCTIONS (HTML Templates) ---
+
+        // Disesuaikan untuk tema putih: Mengeluarkan semua kelas 'dark:'
+        const commonClasses = {
+            card: "bg-white p-8 rounded-[30px] shadow-2xl shadow-indigo-400/30 transition-all duration-500 min-h-[550px] flex flex-col border border-indigo-100",
+            button: "flex items-center justify-center px-6 py-3 font-bold rounded-full transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.98]",
+            primaryButton: "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 shadow-xl shadow-indigo-500/30",
+            secondaryButton: "bg-gray-200 text-gray-800 hover:bg-gray-300 border border-gray-300 shadow-md",
+            input: "w-full p-3 border-2 border-indigo-300 rounded-xl focus:ring-cyan-500 focus:border-cyan-500 bg-white text-gray-900 shadow-inner",
+            header: "text-3xl font-extrabold text-gray-800 mb-6 pb-3 border-b-4 border-cyan-400/50 flex items-center"
+        };
+
+        function renderIcon(iconName, classes) {
+            // Using inline SVG as a fallback if Lucide is slow to load, but relying on Lucide component system via data attributes
+            return `<i data-lucide="${iconName}" class="${classes}"></i>`;
+        }
+
+        const renderSlide1 = () => `
+            <div class="${commonClasses.card}">
+                <h1 class="text-5xl font-extrabold text-indigo-700 mb-6 flex items-center">
+                    ${renderIcon('mic', 'w-12 h-12 mr-4 p-2 bg-indigo-100 rounded-full shadow-lg text-indigo-600')}
+                    ${t('TITLE_MAIN')}
+                </h1>
+                <p class="text-2xl font-semibold text-gray-800 mb-8 tracking-wide">
+                    ${t('TOPIC')}
+                </p>
+
+                <div class="flex-grow">
+                    <div class="mb-8 p-6 bg-indigo-50 rounded-2xl shadow-inner border-l-8 border-indigo-500/80">
+                        <h2 class="text-xl font-bold text-indigo-700 mb-2">${t('MODULE_DESC_TITLE')}</h2>
+                        <p class="text-gray-700">
+                            ${t('MODULE_DESC')}
+                        </p>
+                    </div>
+                    <div class="mb-6">
+                        <h2 class="${commonClasses.header.replace('text-3xl', 'text-2xl').replace('mb-6', 'mb-4').replace('border-b-4', 'border-b-2')}">${t('OBJECTIVES_TITLE')}</h2>
+                        <ul class="space-y-3 text-gray-700 list-none">
+                            <li class="flex items-start">${renderIcon('check-circle', 'w-5 h-5 mr-3 text-cyan-500 flex-shrink-0 mt-1')} ${t('OBJ1')}</li>
+                            <li class="flex items-start">${renderIcon('check-circle', 'w-5 h-5 mr-3 text-cyan-500 flex-shrink-0 mt-1')} ${t('OBJ2')}</li>
+                            <li class="flex items-start">${renderIcon('check-circle', 'w-5 h-5 mr-3 text-cyan-500 flex-shrink-0 mt-1')} ${t('OBJ3')}</li>
+                            <li class="flex items-start">${renderIcon('check-circle', 'w-5 h-5 mr-3 text-cyan-500 flex-shrink-0 mt-1')} ${t('OBJ4')}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-gray-200 flex justify-end">
+                    <button onclick="handleNext()" class="${commonClasses.primaryButton}">
+                        ${t('START_MODULE')} ${renderIcon('arrow-right', 'ml-2 w-5 h-5')}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        const renderSlide2 = () => {
+            const vocab = [
+                { bm: t('V_1_BM'), bi: t('V_1_BI'), fungsi: t('V_1_FUN') },
+                { bm: t('V_2_BM'), bi: t('V_2_BI'), fungsi: t('V_2_FUN') },
+                { bm: t('V_3_BM'), bi: t('V_3_BI'), fungsi: t('V_3_FUN') },
+                { bm: t('V_4_BM'), bi: t('V_4_BI'), fungsi: t('V_4_FUN') },
+                { bm: t('V_5_BM'), bi: t('V_5_BI'), fungsi: t('V_5_FUN') },
+                { bm: t('V_6_BM'), bi: t('V_6_BI'), fungsi: t('V_6_FUN') },
+                { bm: t('V_7_BM'), bi: t('V_7_BI'), fungsi: t('V_7_FUN') },
+            ];
+
+            const vocabList = vocab.map((item, index) => `
+                <div class="bg-white p-4 rounded-xl border-l-4 border-indigo-500 shadow-md transition-shadow hover:shadow-lg hover:scale-[1.01]">
+                    <p class="text-lg font-bold text-indigo-600">${item.bm} <span class="text-xs ml-2 py-0.5 px-2 bg-indigo-200/50 rounded-full italic font-medium text-gray-800">${item.bi}</span></p>
+                    <p class="text-sm text-gray-600 mt-1">${item.fungsi}</p>
+                </div>
+            `).join('');
+
+            return `
+                <div class="${commonClasses.card}">
+                    <h2 class="${commonClasses.header}">
+                        ${renderIcon('book', 'w-6 h-6 mr-3 text-cyan-500')} ${t('VOCAB_TITLE')}
+                    </h2>
+                    <p class="text-md text-gray-600 mb-6">${t('VOCAB_DESC')}</p>
+
+                    <div class="flex-grow overflow-y-auto">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${vocabList}
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-between pt-4 border-t border-gray-200">
+                        <button onclick="handlePrev()" class="${commonClasses.secondaryButton}">
+                            ${renderIcon('arrow-left', 'w-5 h-5 mr-2')} ${t('BACK')}
+                        </button>
+                        <button onclick="handleNext()" class="${commonClasses.primaryButton}">
+                            ${t('TO_EXERCISE')} ${renderIcon('arrow-right', 'ml-2 w-5 h-5')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderAudioTemplate = (slideNum) => {
+            const data = mockQuestionsBilingual[slideNum];
+            const isQSubmitted = state.isSubmitted[slideNum];
+            const currentAnswers = state.answers[slideNum];
+            // Kemas kini skillTextKey untuk Latihan 4 baharu
+            const skillTextKey = data.type === "MCQ" ? 'SKILL_SPECIFIC_INFO' : 
+                                 data.type === "BS" ? 'SKILL_ATTITUDE' : 
+                                 (data.type === "FITB" && slideNum === 5) ? 'SKILL_OPINION' : 
+                                 (data.type === "FITB" && slideNum === 6) ? 'SKILL_PERSPECTIVE' : // Latihan 4 baharu
+                                 'SKILL_PERSPECTIVE';
+            const iconName = data.icon.toLowerCase();
+            const totalScore = state.score[slideNum];
+            const maxScore = 10; // UPDATED
+
+            const getOptionClass = (q, qIndex, option, index, type) => {
+                let classes = "flex items-center p-3 rounded-lg cursor-pointer transition-colors text-sm font-medium border-2";
+                let isCurrentAnswer = false;
+                const userAnswer = currentAnswers[qIndex];
+
+                if (type === "MCQ" || type === "Matching") {
+                    isCurrentAnswer = userAnswer === index;
+                } else if (type === "BS") {
+                    isCurrentAnswer = userAnswer === option;
+                }
+
+                if (isQSubmitted) {
+                    let isQCorrectAnswer = false;
+                    if (type === "MCQ" || type === "Matching") {
+                        isQCorrectAnswer = (index === q.answer);
+                    } else if (type === "BS") {
+                        isQCorrectAnswer = (option === (state.language === 'bm' ? q.answer_bm : q.answer_en));
+                    }
+
+                    if (isQCorrectAnswer) {
+                        classes += ' bg-green-100 border-green-500 font-bold text-green-800';
+                    } else if (isCurrentAnswer) {
+                        classes += ' bg-red-100 border-red-500 line-through text-red-700';
+                    } else {
+                        classes += ' bg-gray-100 border-gray-300 text-gray-700';
+                    }
+                } else {
+                    classes += isCurrentAnswer
+                        ? ' bg-indigo-100 border-indigo-500 shadow-md'
+                        : ' bg-gray-100 hover:bg-indigo-50 border-gray-300';
+                }
+                return classes;
+            };
+
+            const renderInput = (q, qIndex) => {
+                const userAnswer = currentAnswers[qIndex];
+                const inputDisabled = isQSubmitted;
+                let isCorrect = false;
+                let correctAnswerText = '';
+
+                if (isQSubmitted) {
+                    if (data.type === "MCQ" || data.type === "Matching") {
+                        const options = data.type === "MCQ" ? q[`options${langCode()}`] : q[`options${langCode()}`];
+                        isCorrect = userAnswer === q.answer;
+                        correctAnswerText = options[q.answer];
+                    } else if (data.type === "BS") {
+                        const correctAnswer = state.language === 'bm' ? q.answer_bm : q.answer_en;
+                        isCorrect = userAnswer === correctAnswer;
+                        correctAnswerText = correctAnswer;
+                    } else if (data.type === "FITB") {
+                        const correctAnswer = (state.language === 'bm' ? q.answer_bm : q.answer_en).toLowerCase().trim();
+                        const userValue = String(userAnswer).toLowerCase().trim();
+                        isCorrect = userValue === correctAnswer;
+                        correctAnswerText = state.language === 'bm' ? q.answer_bm : q.answer_en;
+                    }
+                }
+
+                switch (data.type) {
+                    case "MCQ":
+                        const mcqOptions = q[`options${langCode()}`];
+                        return `
+                            <div class="space-y-2">
+                                ${mcqOptions.map((option, index) => `
+                                    <label class="${getOptionClass(q, qIndex, option, index, 'MCQ')}">
+                                        <input
+                                            type="radio"
+                                            name="q-${slideNum}-${qIndex}"
+                                            value="${index}"
+                                            onchange="handleAnswerChange(${slideNum}, ${qIndex}, parseInt(this.value))"
+                                            ${userAnswer === index ? 'checked' : ''}
+                                            ${inputDisabled ? 'disabled' : ''}
+                                            class="form-radio h-5 w-5 text-indigo-600 transition duration-150 ease-in-out"
+                                        />
+                                        <span class="ml-3">${option}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        `;
+
+                    case "BS":
+                        const bsOptions = [t('CORRECT_TEXT'), t('FALSE_TEXT')];
+                        return `
+                            <div class="flex space-x-4">
+                                ${bsOptions.map((option) => `
+                                    <label class="${getOptionClass(q, qIndex, option, null, 'BS')}">
+                                        <input
+                                            type="radio"
+                                            name="q-${slideNum}-${qIndex}"
+                                            value="${option}"
+                                            onchange="handleAnswerChange(${slideNum}, ${qIndex}, this.value)"
+                                            ${userAnswer === option ? 'checked' : ''}
+                                            ${inputDisabled ? 'disabled' : ''}
+                                            class="form-radio h-5 w-5 text-indigo-600 transition duration-150 ease-in-out"
+                                        />
+                                        <span class="ml-2">${option}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        `;
+
+                    case "FITB":
+                        return `
+                            <div class="flex flex-col space-y-2">
+                                <input
+                                    type="text"
+                                    value="${userAnswer || ''}"
+                                    oninput="handleAnswerChange(${slideNum}, ${qIndex}, this.value)"
+                                    ${inputDisabled ? 'disabled' : ''}
+                                    class="${commonClasses.input}"
+                                    placeholder="${t('INPUT_PLACEHOLDER')}"
+                                />
+                                ${isQSubmitted ? `
+                                    <div class="mt-2 text-sm font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}">
+                                        ${isCorrect ? t('RIGHT_ANSWER') : `${t('ANSWER')} ${correctAnswerText}`}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+
+                    case "Matching":
+                        const matchingOptions = q[`options${langCode()}`];
+                        return `
+                            <div class="flex space-x-2 items-center">
+                                <select
+                                    value="${userAnswer === null ? '' : userAnswer}"
+                                    onchange="handleAnswerChange(${slideNum}, ${qIndex}, parseInt(this.value))"
+                                    ${inputDisabled ? 'disabled' : ''}
+                                    class="${commonClasses.input}"
+                                >
+                                    <option value="" disabled ${userAnswer === null ? 'selected' : ''}>${t('MATCHING_DEFAULT')}</option>
+                                    ${matchingOptions.map((option, index) => `
+                                        <option value="${index}">${option}</option>
+                                    `).join('')}
+                                </select>
+                                ${isQSubmitted ? `
+                                    <div class="text-sm font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}">
+                                        ${isCorrect ? t('CORRECT_TEXT') : `${t('ANSWER')} ${correctAnswerText}`}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+
+                    default:
+                        return '';
+                }
+            };
+
+            const questionsHtml = data.q.map((q, index) => `
+                <div class="p-4 bg-white rounded-xl shadow-md border border-gray-200">
+                    <p class="font-semibold text-gray-800 mb-3">${q[`text${langCode()}`]}</p>
+                    ${renderInput(q, index)}
+                </div>
+            `).join('');
+
+            // --- KEMAS KINI LALUAN AUDIO (PATH) - TIADA FOLDER 'audio/' ---
+            // DIBETULKAN: Menggunakan huruf kecil 'l' untuk memadankan nama fail yang dimuat naik
+            let audioFileName = "conversation-ali-mei.wav"; // Lalai
+            if (slideNum === 3) {
+                audioFileName = "latihan_1.wav";
+            } else if (slideNum === 4) {
+                audioFileName = "latihan_2.wav";
+            } else if (slideNum === 5) {
+                audioFileName = "latihan_3.wav";
+            } else if (slideNum === 6) {
+                audioFileName = "latihan_4.wav";
+            }
+            // --- TAMAT KEMAS KINI LALUAN AUDIO ---
+
+            const audioPlayerHtml = `
+                <div class="border-4 border-indigo-400 bg-indigo-50 p-4 rounded-xl mb-6 shadow-lg shadow-indigo-200/50 transition-shadow">
+                    <p class="text-sm font-medium text-indigo-800 flex items-center mb-2">
+                        ${renderIcon('volume-2', 'w-4 h-4 mr-2 text-indigo-600')} ${t('AUDIO_CONTROL')}
+                    </p>
+                    <audio
+                        controls
+                        src="${audioFileName}" 
+                        onplay="handleAudioPlay(${slideNum})"
+                        class="w-full bg-white rounded-lg shadow-inner"
+                    >
+                        ${state.language === 'bm' ? "Pelayar anda tidak menyokong elemen audio." : "Your browser does not support the audio element."}
+                    </audio>
+                </div>
+            `;
+
+            const feedbackHtml = state.feedback.text ? `
+                <div class="mt-6 p-4 bg-cyan-50 rounded-xl border-4 border-cyan-400 shadow-2xl shadow-cyan-300/50 transition-shadow">
+                    <h4 class="text-xl font-bold text-cyan-800 mb-2 flex items-center">
+                        ${renderIcon('zap', 'w-5 h-5 mr-2 text-cyan-600')} ${t('FEEDBACK_TITLE')}
+                    </h4>
+                    ${state.feedback.isLoading ? `
+                        <p class="text-cyan-700 animate-pulse">${t('FEEDBACK_LOADING')}</p>
+                    ` : `
+                        <p class="text-cyan-700 italic mb-3">${state.feedback.text}</p>
+                        <audio
+                            controls
+                            src="${state.feedback.audioUrl}"
+                            class="w-full mt-2 bg-white rounded-lg shadow-inner"
+                        >
+                            ${state.language === 'bm' ? "Pelayar anda tidak menyokong audio." : "Your browser does not support audio."}
+                        </audio>
+                    `}
+                </div>
+            ` : '';
+
+            return `
+                <div class="${commonClasses.card}">
+                    <h2 class="${commonClasses.header}">
+                        ${renderIcon(iconName, 'w-6 h-6 mr-3 text-cyan-500')}
+                        ${data[`title${langCode()}`]}
+                        <span class="ml-auto text-lg font-bold text-cyan-600 bg-cyan-50 px-4 py-1 rounded-full shadow-lg border border-cyan-300">
+                            ${t('SCORE')} ${totalScore} / ${maxScore}
+                        </span>
+                    </h2>
+
+                    <p class="text-md font-medium text-indigo-700 mb-6 border-b border-gray-100 pb-3">
+                        ${t('SCENARIO')} ${data[`scenario${langCode()}`]}
+                    </p>
+
+                    ${audioPlayerHtml}
+
+                    <div class="flex-grow overflow-y-auto space-y-6 pt-2">
+                        <p class="font-semibold text-gray-700 bg-indigo-50 p-2 rounded-lg border-l-4 border-indigo-400">
+                            ${t('SKILL_TESTED')} <span class="text-cyan-600 font-extrabold">${t(skillTextKey)}</span>
+                        </p>
+                        <div class="space-y-4">
+                            ${questionsHtml}
+                        </div>
+                    </div>
+
+                    ${isQSubmitted ? feedbackHtml : ''}
+
+                    <div class="mt-6 flex justify-between pt-4 border-t border-gray-200">
+                        <button onclick="handlePrev()" class="${commonClasses.secondaryButton}">
+                            ${renderIcon('arrow-left', 'w-5 h-5 mr-2')} ${t('BACK')}
+                        </button>
+                        <button 
+                            onclick="handleNext()" 
+                            class="${commonClasses.secondaryButton.replace('secondaryButton', 'primaryButton')}"
+                        >
+                            ${t('NEXT')} ${renderIcon('arrow-right', 'ml-2 w-5 h-5')}
+                        </button>
+                        
+                        ${!isQSubmitted ? `
+                            <button
+                                onclick="handleSubmit(${slideNum})"
+                                ${!state.isAudioPlayed[slideNum] ? 'disabled' : ''}
+                                class="${commonClasses.primaryButton} ${!state.isAudioPlayed[slideNum] ? ' opacity-50 cursor-not-allowed' : ''}"
+                            >
+                                ${state.isAudioPlayed[slideNum] ? t('SUBMIT_ANSWERS') : t('PLAY_AUDIO_FIRST')}
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        };
+
+
+        const renderSlide7 = () => {
+            const isReflectionWritten = state.answers[7].length >= 10;
+            return `
+                <div class="${commonClasses.card}">
+                    <h2 class="${commonClasses.header}">
+                        ${renderIcon('check-circle', 'w-6 h-6 mr-3 text-cyan-500')} ${t('REFLECTION_TITLE')}
+                    </h2>
+                    <div class="flex-grow overflow-y-auto">
+                        <div class="p-4 bg-yellow-100 rounded-xl mb-6 border-l-4 border-yellow-500 shadow-md">
+                            <p class="font-bold text-yellow-800 mb-2">${t('REFLECTION_TASK_TITLE')}</p>
+                            <p class="text-gray-700">
+                                ${t('REFLECTION_TASK')}
+                            </p>
+                        </div>
+
+                        <textarea
+                            oninput="handleReflectionChange(this)"
+                            rows="15"
+                            class="${commonClasses.input}"
+                            placeholder="${t('REFLECTION_PLACEHOLDER')}"
+                        >${state.answers[7]}</textarea>
+                    </div>
+                    <div class="mt-6 flex justify-between pt-4 border-t border-gray-200">
+                        <button onclick="handlePrev()" class="${commonClasses.secondaryButton}">
+                            ${renderIcon('arrow-left', 'w-5 h-5 mr-2')} ${t('BACK')}
+                        </button>
+                        <button
+                            onclick="handleNext()"
+                            ${!isReflectionWritten ? 'disabled' : ''}
+                            class="${commonClasses.primaryButton} ${!isReflectionWritten ? ' opacity-50 cursor-not-allowed' : ''}"
+                        >
+                            ${t('REPORT_SCORE')} ${renderIcon('arrow-right', 'ml-2 w-5 h-5')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderSlide8 = () => {
+            const totalScore = state.score[3] + state.score[4] + state.score[5] + state.score[6];
+            const maxTotalScore = 40; // UPDATED
+            return `
+                <div class="${commonClasses.card}">
+                    <h2 class="text-4xl font-extrabold text-cyan-700 mb-6 flex items-center">
+                        ${renderIcon('zap', 'w-8 h-8 mr-3 p-2 bg-cyan-100 rounded-full shadow-lg text-cyan-600')} ${t('SUMMARY_TITLE')}
+                    </h2>
+
+                    <div class="flex-grow">
+                        <div class="mb-8 p-4 bg-indigo-50 rounded-xl shadow-inner border-l-4 border-indigo-500">
+                            <h3 class="text-xl font-bold text-indigo-700 mb-2">${t('CONGRATS_ACHIEVEMENT')}</h3>
+                            <p class="text-gray-700">
+                                ${t('SUMMARY_SUMMARY')}
+                            </p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-indigo-100 to-cyan-100 p-6 rounded-2xl shadow-2xl border-2 border-indigo-400">
+                            <h3 class="text-2xl font-bold text-indigo-800 mb-4">${t('CONGRATS_ACHIEVEMENT')}</h3>
+                            <div class="text-7xl font-extrabold text-indigo-700 mb-4 tracking-wider">
+                                ${totalScore} <span class="text-4xl text-gray-500">/ ${maxTotalScore}</span>
+                            </div>
+                            <p class="text-lg font-medium text-gray-700">
+                                ${t('OVERALL_SCORE')} <span class="font-extrabold text-indigo-700">${totalScore}</span> ${t('OUT_OF')} ${maxTotalScore} ${t('CONGRATS')}
+                            </p>
+                            <div class="mt-6 grid grid-cols-2 gap-4 text-md font-medium text-gray-700">
+                                <p class='bg-white p-3 rounded-lg shadow-md'>${t('NAV_3')}: <span class="font-extrabold text-teal-600">${state.score[3]} / 10</span></p>
+                                <p class='bg-white p-3 rounded-lg shadow-md'>${t('NAV_4')}: <span class="font-extrabold text-teal-600">${state.score[4]} / 10</span></p>
+                                <p class='bg-white p-3 rounded-lg shadow-md'>${t('NAV_5')}: <span class="font-extrabold text-teal-600">${state.score[5]} / 10</span></p>
+                                <p class='bg-white p-3 rounded-lg shadow-md'>${t('NAV_6')}: <span class="font-extrabold text-teal-600">${state.score[6]} / 10</span></p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <h3 class="text-xl font-semibold text-gray-700 mb-3">${t('REFLECTION_YOURS')}</h3>
+                            <div class="p-4 h-32 overflow-y-auto bg-gray-50 rounded-xl text-sm text-gray-800 italic border border-gray-300 shadow-inner">
+                                ${state.answers[7] || t('REFLECTION_REQUIRED')}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-200 flex justify-end">
+                        <button onclick="handleNavigate(1)" class="${commonClasses.secondaryButton}">
+                            ${renderIcon('arrow-left', 'w-5 h-5 mr-2')} ${t('RESTART_MODULE')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderSlideNav = () => {
+            const slides = [
+                { num: 1, title: t('NAV_1'), icon: 'book-open' },
+                { num: 2, title: t('NAV_2'), icon: 'book' },
+                // PEMBETULAN IKON (usercheck -> user-check)
+                { num: 3, title: t('NAV_3'), icon: 'user-check', isDone: state.isSubmitted[3] },
+                { num: 4, title: t('NAV_4'), icon: 'book', isDone: state.isSubmitted[4] },
+                { num: 5, title: t('NAV_5'), icon: 'book-open', isDone: state.isSubmitted[5] },
+                { num: 6, title: t('NAV_6'), icon: 'users', isDone: state.isSubmitted[6] },
+                { num: 7, title: t('NAV_7'), icon: 'check-circle', isDone: state.answers[7].length > 10 },
+                { num: 8, title: t('NAV_8'), icon: 'zap' },
+            ];
+            const totalScore = state.score[3] + state.score[4] + state.score[5] + state.score[6];
+            const maxTotalScore = 40; // UPDATED
+
+            const navItems = slides.map(slide => `
+                <button
+                    key="${slide.num}"
+                    onclick="handleNavigate(${slide.num})"
+                    class="w-full text-left p-3 rounded-xl transition-all duration-200 flex items-center justify-between text-sm font-semibold transform hover:scale-[1.02] ${
+                        state.currentSlide === slide.num
+                            ? 'bg-gradient-to-r from-indigo-600 to-cyan-500 text-white shadow-lg shadow-indigo-400/50'
+                            : 'text-gray-700 hover:bg-indigo-50 border border-transparent hover:border-indigo-200'
+                    }"
+                >
+                    <span class="flex items-center">
+                        <span class="mr-3 p-1 rounded-full text-xs font-bold w-6 h-6 flex items-center justify-center ${state.currentSlide === slide.num ? 'bg-white text-indigo-600' : 'text-indigo-600 bg-indigo-100'}">${slide.num}</span>
+                        ${slide.title}
+                    </span>
+                    ${slide.isDone ? renderIcon('check-circle', `w-4 h-4 ${state.currentSlide === slide.num ? 'text-white' : 'text-green-500'}`) : ''}
+                </button>
+            `).join('');
+
+            return `
+                <div class="hidden lg:block w-64 mr-8 p-5 bg-white rounded-[30px] shadow-2xl shadow-indigo-400/30 h-fit sticky top-8 transition-all duration-300 border border-indigo-50">
+                    <h3 class="text-xl font-extrabold text-gray-800 mb-4 border-b pb-2 border-indigo-300 flex items-center">
+                        ${renderIcon('volume-2', 'w-5 h-5 mr-2 text-indigo-500')} ${t('NAV_TITLE')}
+                    </h3>
+                    <div class="space-y-2">
+                        ${navItems}
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-200 text-center">
+                        <p class="text-3xl font-extrabold text-indigo-700">
+                            ${totalScore} / ${maxTotalScore}
+                        </p>
+                        <p class="text-sm text-gray-500 font-medium">${t('SCORE_ACCUMULATED')}</p>
+                    </div>
+                </div>
+            `;
+        };
+
+
+        const renderApp = () => {
+            let slideContent = '';
+            switch (state.currentSlide) {
+                case 1: slideContent = renderSlide1(); break;
+                case 2: slideContent = renderSlide2(); break;
+                case 3:
+                case 4:
+                case 5:
+                case 6: slideContent = renderAudioTemplate(state.currentSlide); break;
+                case 7: slideContent = renderSlide7(); break;
+                case 8: slideContent = renderSlide8(); break;
+                default: slideContent = renderSlide1();
+            }
+
+            const isFullscreen = document.fullscreenElement;
+            const fullscreenIcon = isFullscreen ? 'minimize' : 'maximize';
+            const fullscreenText = isFullscreen ? 
+                (state.language === 'bm' ? 'Keluar Skrin Penuh (F)' : 'Exit Fullscreen (F)') : 
+                (state.language === 'bm' ? 'Skrin Penuh (F)' : 'Fullscreen (F)');
+            
+            const appHtml = `
+                <div class="max-w-7xl mx-auto flex">
+                    ${renderSlideNav()}
+                    <div class="flex-grow">
+                        <!-- Language Toggle and FULLSCREEN Button ROW -->
+                        <div class="flex justify-end space-x-3 mb-4 -mt-2">
+                            <!-- FULLSCREEN BUTTON -->
+                            <button
+                                onclick="toggleFullScreen()"
+                                class="${commonClasses.button} ${commonClasses.secondaryButton.replace('shadow-md', 'shadow-lg')} text-sm"
+                                title="${fullscreenText}"
+                            >
+                                ${renderIcon(fullscreenIcon, 'w-4 h-4 mr-2')}
+                                ${fullscreenText}
+                            </button>
+
+                            <!-- Existing Language Toggle Button -->
+                            <button
+                                onclick="toggleLanguage()"
+                                class="${commonClasses.button} ${commonClasses.secondaryButton.replace('shadow-md', 'shadow-lg')} text-sm"
+                            >
+                                ${renderIcon('globe', 'w-4 h-4 mr-2')}
+                                ${state.language === 'bm' ? 'Tukar ke English' : 'Switch to Malay'}
+                            </button>
+                        </div>
+                        
+                        ${slideContent}
+                        
+                        <p class="mt-4 text-center text-sm text-gray-500">
+                            ${t('CURRENT_SLIDE')} ${state.currentSlide} ${t('OUT_OF')} 8. ${t('QUICK_NAV')}
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            const appRoot = document.getElementById('app-root');
+            appRoot.innerHTML = appHtml;
+            
+            // Re-run Lucide icon creation after updating innerHTML
+            if (window.createIcons) {
+                window.createIcons();
+            }
+        };
+
+        // --- INITIALIZATION AND KEYBOARD HANDLER ---
+        
+        // Keyboard Navigation (Must be global to catch key presses)
+        window.addEventListener('keydown', (event) => {
+            // Prevent navigation if focus is in an input/textarea
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA' || event.target.tagName === 'SELECT') {
+                return;
+            }
+
+            if (event.key === 'ArrowRight') {
+                handleNext();
+            } else if (event.key === 'ArrowLeft') {
+                handlePrev();
+            } else if (event.key === 'f' || event.key === 'F') { // Shortcut for Fullscreen
+                event.preventDefault(); // Prevent default browser behavior
+                toggleFullScreen();
+            }
+        });
+
+        // Initial render on load
+        window.onload = renderApp;
+    </script>
+</body>
+</html>
